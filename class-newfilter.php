@@ -5,7 +5,8 @@ class NewFilter {
 
 	public function __construct() {
 
-		$f      = new Filter();
+		$f = new Filter();
+
 		$filter = false;
 
 		if ( $_GET['filterID'] ) {
@@ -13,12 +14,12 @@ class NewFilter {
 			$filter = $f->get_filter( $id );
 		}
 
-		$data = array();
+		$data         = array();
 		$data['name'] = $filter ? $filter['name'] : '';
 		$data['desc'] = $filter ? $filter['desc'] : '';
 		$data['step'] = $filter ? $filter['step'] : false;
 
-		$attr_select = $f->attrSelect();
+		$attr_select = $f->attr_select();
 
 		include 'template/new-filter.phtml';
 

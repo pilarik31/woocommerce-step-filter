@@ -1,6 +1,4 @@
 <?php
-
-
 /*
 Plugin Name: WooCommerce step filter
 Description: WooCommerce products step filter
@@ -8,9 +6,6 @@ Version: 1.0
 Author: IT Lab czech s.r.o.
 License: Commercial
 */
-
-
-
 
 //Přídání souborů css a js
 
@@ -433,14 +428,14 @@ function step_filter_respond() {
 
 		 ob_start();
 
-		 the_widget(
+        the_widget(
 			'prdctfltr',
 			'preset=' . $_POST['pf_preset'] . '&template=' . $_POST['pf_template'],
 			array(
 				'before_title' => stripslashes( $curr_title[0] ),
 				'after_title'  => stripslashes( $curr_title[1] ),
 			)
-		 );
+        );
 
 		 $out .= ob_get_clean();
 

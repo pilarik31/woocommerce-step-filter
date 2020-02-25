@@ -4,16 +4,13 @@ class LoadFilter {
 
 	public function __construct( $id = null ) {
 
-		$f      = new Filter();
+		$f = new Filter();
+
 		$filter = false;
 
 		if ( $id ) {
 			$filter = $f->get_filter( $id );
 			include 'template/filter.phtml';
 		}
-
 	}
-
-
-
 }

@@ -43,19 +43,19 @@ class Filter {
 
 			$return[ $f['id'] ]         = $f;
 			$return[ $f['id'] ]['step'] = unserialize( $f['step'] );
-			$return[ $f['id'] ]['desc'] = $this->decodeHtml( $f['desc'] );
+			$return[ $f['id'] ]['desc'] = $this->decode_html( $f['desc'] );
 
 			$steps = array();
 
 			foreach ( $return[ $f['id'] ]['step'] as $s ) {
 
-				$s['desc'] = $this->decodeHtml( $s['desc'] );
+				$s['desc'] = $this->decode_html( $s['desc'] );
 
 				$vals = array();
 
 				foreach ( $s['vals'] as $v ) {
 
-					$v['desc'] = $this->decodeHtml( $v['desc'] );
+					$v['desc'] = $this->decode_html( $v['desc'] );
 
 					$vals[] = $v;
 				}
@@ -81,7 +81,7 @@ class Filter {
 
 		$return         = array();
 		$return         = $results[0];
-		$return['desc'] = $this->decodeHtml( $return['desc'] );
+		$return['desc'] = $this->decode_html( $return['desc'] );
 		$return['step'] = unserialize( $return['step'] );
 
 		$steps = array();
@@ -90,13 +90,13 @@ class Filter {
 
 			foreach ( $return['step'] as $s ) {
 
-				$s['desc'] = $this->decodeHtml( $s['desc'] );
+				$s['desc'] = $this->decode_html( $s['desc'] );
 
 				$vals = array();
 
 				foreach ( $s['vals'] as $v ) {
 
-					$v['desc'] = $this->decodeHtml( $v['desc'] );
+					$v['desc'] = $this->decode_html( $v['desc'] );
 
 					$vals[] = $v;
 				}
@@ -148,7 +148,7 @@ class Filter {
 
 		$filter_id   = $data['filterID'] != 'false' ? intval( $data['filterID'] ) : false;
 		$filter_name = $data['filterName'];
-		$filter_desc = $this->encodeHtml( $data['filterDesc'] );
+		$filter_desc = $this->encode_html( $data['filterDesc'] );
 
 		//$steps = $data['steps'];
 
@@ -158,13 +158,13 @@ class Filter {
 
 		foreach ( $data['steps'] as $s ) {
 
-			$s['desc'] = $this->encodeHtml( $s['desc'] );
+			$s['desc'] = $this->encode_html( $s['desc'] );
 
 			$vals = array();
 
 			foreach ( $s['vals'] as $v ) {
 
-				$v['desc'] = $this->encodeHtml( $v['desc'] );
+				$v['desc'] = $this->encode_html( $v['desc'] );
 
 				$vals[] = $v;
 			}
@@ -215,105 +215,86 @@ class Filter {
 
 
 
-	public function encodeHtml( $text ) {
-
+	public function encode_html( $text ) {
 		return htmlentities( htmlspecialchars( str_replace( '\\', '', $text ) ) );
-
 	}
 
 
 
-	public function decodeHtml( $text ) {
-
+	public function decode_html( $text ) {
 		return html_entity_decode( htmlspecialchars_decode( $text ) );
-
 	}
 
 
 
-	/**------ HTML -----------------------------------------------------------------------------------------------------------*/
+	/* ------ HTML ------ */
+	/* ------ ---- ------ */
 
-	//vytvoření select listu
-
-	public function attrSelect( $selected = false ) {
+	/**
+	 * Vytvoření select listu.
+	 *
+	 * @param boolean $selected
+	 * @return string HTML
+	 */
+	public function attr_select( $selected = false ) {
 
 		$attr = $this->get_attributes();
 
 		$select = '<select name="step_param">';
 
 		foreach ( $attr as $a ) {
-
-			$selectedOption = '';
-
+			$selected_option = '';
 			if ( $selected == $a['attribute_name'] ) {
-
-				$selectedOption = 'selected="selected"';
-
+				$selected_option = 'selected="selected"';
 			}
-
-			$select .= '<option value="' . $a['attribute_name'] . '" ' . $selectedOption . '>' . $a['attribute_label'] . '</option>';
-
+			$select .= '<option value="' . $a['attribute_name'] . '" ' . $selected_option . '>' . $a['attribute_label'] . '</option>';
 		}
-
 		$select .= '</select>';
-
 		return $select;
-
 	}
 
-
-
-	//select list s výběrem hodnoty
-
-	public function valSelect( $attr_name, $selected = false ) {
+	/**
+	 * Select list s výběrem hodnoty.
+	 *
+	 * @param [type] $attr_name
+	 * @param boolean $selected
+	 * @return string HTML
+	 */
+	public function val_select( $attr_name, $selected = false ) {
 
 		$vals = $this->get_vals( $attr_name );
 
 		$select = '<select name="val_param" attr="' . $attr_name . '">';
 
-		// var_dump($vals);
-
 		foreach ( $vals as $v ) {
-
 			if ( $selected && $selected == $v['slug'] ) {
-
 				$select .= '<option value="' . $v['slug'] . '" selected="selected">' . $v['name'] . '</option>';
-
 			} else {
-
 				$select .= '<option value="' . $v['slug'] . '">' . $v['name'] . '</option>';
-
 			}
 		}
 
 		$select .= '</select>';
 
 		return $select;
-
 	}
 
-
-
-	//vytvoření select listů s výběrem hodnot
-
-	public function allValSelect() {
+	/**
+	 * Vytvoření select listů s výběrem hodnot.
+	 *
+	 * @return string HTML
+	 */
+	public function allval_select() {
 
 		$attr = $this->get_attributes();
 
 		$return = '<div id="vals_lists">';
 
 		foreach ( $attr as $a ) {
-
-			$return .= $this->valSelect( $a['attribute_name'] );
-
+			$return .= $this->val_select( $a['attribute_name'] );
 		}
-
 		$return .= '</div>';
 
 		return $return;
-
 	}
-
-
-
 }

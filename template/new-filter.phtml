@@ -534,7 +534,7 @@ echo '<input id="filterID" value="' . $filter_id . '" class="hidden" />';
 
             <label for="step_param">Parametr</label>
 
-            <?php echo $attrSelect; ?>
+            <?php echo $attr_select; ?>
 
             <label for="multiselect">Multiselect</label>
 
@@ -622,7 +622,7 @@ echo '<input id="filterID" value="' . $filter_id . '" class="hidden" />';
 
 
 
-<?php echo $f->allValSelect(); ?>
+<?php echo $f->allval_select(); ?>
 
 
 
@@ -712,7 +712,7 @@ echo '<input id="filterID" value="' . $filter_id . '" class="hidden" />';
 
                             <label for="step_param">Parametr</label>
 
-                            <?php echo $f->attrSelect($s['attr']); ?>
+                            <?php echo $f->attr_select($s['attr']); ?>
 
                             <label for="multiselect">Multiselect</label>
 
@@ -790,7 +790,7 @@ echo '<input id="filterID" value="' . $filter_id . '" class="hidden" />';
 
                                                 <span class="val_param">
 
-                                                    <?php echo $f->valSelect($s['attr'], $v['val']); ?>
+                                                    <?php echo $f->val_select($s['attr'], $v['val']); ?>
 
                                                 </span>
 
