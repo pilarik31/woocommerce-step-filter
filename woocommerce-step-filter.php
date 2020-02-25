@@ -8,33 +8,21 @@ License: Commercial
 */
 
 //Přídání souborů css a js
-
 function css_js() {
-
 	//wp_register_script( 'js', plugins_url('vendor/ckeditor/ckeditor.js',__FILE__ ));
-
 	//wp_enqueue_script('js');
-
 }
-
 
 add_action( 'admin_init', 'css_js' );
 
 
-
-
-//načtení filtru pomocí shortcode
-
-
+// Načtení filtru pomocí shortcode.
 add_shortcode( 'STEP_FILTER', 'show_filter' );
 
 function show_filter( $atts = array() ) {
-
 	shortcode_atts(
 		array(
-
 			'id' => false,
-
 		),
 		$atts
 	);
@@ -42,56 +30,41 @@ function show_filter( $atts = array() ) {
 	$return = '';
 
 	if ( $atts['id'] ) {
-
 		include 'class-loadfilter.php';
-
 		new LoadFilter( $atts['id'] );
-
 	}
-
 }
 
 
 
 
-/**------------- Položka menu --------------------------------------------------------------------------------------------------------------------*/
+/* ------------- Položka menu ------------- */
 
 
-//přidá funkci do menu
-
-
+// Přidá funkci do menu.
 add_action( 'admin_menu', 'woocommerce_step_filter' );
 
-
-
-
-//určení názvů, levelu oprávněného uživatele a stránky v administračním rozhraní
-
+/**
+ * Určení názvů, levelu oprávněného uživatele a stránky v administračním rozhraní.
+ *
+ * @return void
+ */
 function woocommerce_step_filter() {
-
 	add_menu_page( 'WooCommerce step filter', 'WooCommerce step filter', administrator, 'woocommerce-step-filter', 'menu_options' );
-
 	add_submenu_page( 'woocommerce-step-filter', 'Vytvořit filtr', 'Vytvořit filtr', administrator, 'new-woocommerce-step-filter', 'new_filter' );
-
 }
 
-
-
-
-//Obsah položky menu v administraci
-
+/**
+ * Obsah položky menu v administraci.
+ *
+ * @return void
+ */
 function menu_options() {
-
-	include 'Settings.php';
-
+	include 'class-settings.php';
 }
-
-
 
 function new_filter() {
-
 	include 'class-newfilter.php';
-
 }
 
 
@@ -112,16 +85,18 @@ function new_filter() {
 
 add_action( 'wp_ajax_save_filter', 'save_filter' );
 
+/**
+ * uložení filtru
+ *
+ * @return void
+ */
 function save_filter() {
 
 	require_once 'class/class-filter.php';
-
 	$f = new Filter();
 
 	$id = $f->save_filter( $_POST );
-
 	//$steps = $_POST['steps'];
-
 	//var_dump($steps);exit;
 
 	wp_send_json(
@@ -130,37 +105,23 @@ function save_filter() {
 			'id'      => $id,
 		)
 	);
-
 }
 
-
-
-
 //editor
-
-
 add_action( 'wp_ajax_get_editor', 'get_editor' );
 
 function get_editor() {
-
 	$name = $_POST['name'];
 
 	$settings = array(
-
 		'teeny'         => true,
-
 		'textarea_rows' => 10,
-
 		'tabindex'      => 1,
-
 	);
 
 	ob_start();
-
 	wp_editor( '', $name, $settings );
-
 	$output = ob_get_contents();
-
 	ob_end_clean();
 
 	wp_send_json(
@@ -169,7 +130,6 @@ function get_editor() {
 			'editor'  => $output,
 		)
 	);
-
 }
 
 
@@ -218,11 +178,8 @@ function step_filter_respond() {
 	$qargs = array_merge(
 		$qargs,
 		array(
-
 			'post_type'   => 'product',
-
 			'post_status' => 'publish',
-
 		)
 	);
 
@@ -235,13 +192,9 @@ function step_filter_respond() {
 	$args = str_replace( 'paged=' . $current_page . '&', 'paged=' . $page . '&', $ajax_query );
 
 	if ( $no_products == 'yes' ) {
-
 		$use_filter = 'no';
-
 		$pagination = 'no';
-
-		$orderby = 'rand';
-
+		$orderby    = 'rand';
 	}
 
 	$add_ajax = ' data-query="' . $args . '" data-page="' . $res_paged . '" data-shortcode="' . $_POST['pf_shortcode'] . '"';
@@ -251,13 +204,9 @@ function step_filter_respond() {
 	$margin = " style='margin-bottom:" . $bot_margin . "px'";
 
 	if ( isset( $_POST['pf_filters'] ) ) {
-
 		$curr_filters = $_POST['pf_filters'];
-
 	} else {
-
 		$curr_filters = array();
-
 	}
 
 	$filter_args = '';
@@ -265,47 +214,32 @@ function step_filter_respond() {
 	foreach ( $curr_filters as $k => $v ) {
 
 		if ( strpos( $v, ',' ) ) {
-
 			$new_v = str_replace( ',', '%2C', $v );
-
 		} elseif ( strpos( $v, '+' ) ) {
-
 			$new_v = str_replace( '+', '%2B', $v );
-
 		} else {
-
 			$new_v = $v;
-
 		}
-
 		$filter_args .= '&' . $k . '=' . $new_v;
-
 	}
 
 	$prdctfltr_global['ajax_query'] = $args;
 
 	$args = $args . $filter_args . '&prdctfltr=active';
 
-	$prdctfltr_global['ajax_paged'] = $res_paged;
-
+	$prdctfltr_global['ajax_paged']     = $res_paged;
 	$prdctfltr_global['active_filters'] = $curr_filters;
 
 	if ( $action !== '' ) {
-
 		$prdctfltr_global['action'] = $action;
-
 	}
 
 	if ( $preset !== '' ) {
-
 		$prdctfltr_global['preset'] = $preset;
-
 	}
 
 	if ( $disable_overrides !== '' ) {
-
 		$prdctfltr_global['disable_overrides'] = $disable_overrides;
-
 	}
 
 	$out = '';
@@ -314,8 +248,7 @@ function step_filter_respond() {
 
 	$woocommerce_loop['columns'] = apply_filters( 'loop_shop_columns', $columns );
 
-	$prdctfltr_global['ajax'] = true;
-
+	$prdctfltr_global['ajax']    = true;
 	$prdctfltr_global['sc_ajax'] = $_POST['pf_mode'] == 'no' ? 'no' : null;
 
 	$products = new WP_Query( $args );
@@ -329,9 +262,7 @@ function step_filter_respond() {
 	ob_start();
 
 	if ( $use_filter == 'yes' ) {
-
 		include WC_Prdctfltr::$dir . 'woocommerce/loop/product-filter.php';
-
 	}
 
 	if ( $products->have_posts() ) :
