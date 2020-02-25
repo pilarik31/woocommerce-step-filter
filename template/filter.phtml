@@ -1,0 +1,97 @@
+<link rel="stylesheet" href="/wp-content/plugins/woocommerce-step-filter/assets/filter.css?v=1" type="text/css">
+<script type="text/javascript" async="" src="/wp-content/plugins/woocommerce-step-filter/assets/filter.js?v=1.2"></script>
+
+<?php ?>
+
+<div id="stepFilter" style="display: block;">
+    <div class="loading">
+        <div class="sk-circle">
+            <div class="sk-circle1 sk-child"></div>
+            <div class="sk-circle2 sk-child"></div>
+            <div class="sk-circle3 sk-child"></div>
+            <div class="sk-circle4 sk-child"></div>
+            <div class="sk-circle5 sk-child"></div>
+            <div class="sk-circle6 sk-child"></div>
+            <div class="sk-circle7 sk-child"></div>
+            <div class="sk-circle8 sk-child"></div>
+            <div class="sk-circle9 sk-child"></div>
+            <div class="sk-circle10 sk-child"></div>
+            <div class="sk-circle11 sk-child"></div>
+            <div class="sk-circle12 sk-child"></div>
+        </div>
+    </div>
+	
+	 <div id="navigation" class="hidden">
+        <?php
+        $num = 1;
+        foreach ($filter['step'] as $step) {
+            echo '<a href="#" step="' . $num . '" title="' . $step['name'] . '">' . $num . '</a>';
+            $num++;
+        } ?>
+    </div>
+    <a href="#" class="vysledek">Zobrazit výsledek</a>
+
+    <div id="steps">
+
+        <div class="step" step="0">
+            <div class="titolo">
+                <h1><?= $filter['name'] ?></h1>
+            </div>
+
+            <div class="center">
+                <p><?= $filter['desc'] ?></p>
+                <br/>
+                <p><a href="#start" class="start">SPUSTIT</a></p>
+            </div>
+        </div>
+
+        <?php
+        $num = 1;
+        foreach ($filter['step'] as $step) : ?>
+
+            <div class="step" step="<?= $num ?>" param="<?= $step['attr'] ?>"
+                 style="left: <?= $num * 100; ?>%" <?php if ($step['multi']) {
+                echo 'multi="1"';
+            } ?> >
+
+                <?php
+                if ($step['multi']) {
+                    echo '<a href="#" class="hidden next"><span>Dále</span></a>';
+                }
+                ?>
+
+                <?php if ($num != count($filter['step']) && !$step['multi']) : ?>
+                    <a href="#" class="next2"><span>Přeskočit</span></a>
+                <?php endif; ?>
+
+                <?php if ($num != 1) : ?>
+                    <a href="#" class="back"><span>Zpět</span></a>
+                <?php endif; ?>
+
+                <h2 class="titolo"><?= $step['name'] ?></h2>
+                <h3><?= $step['desc'] ?></h3>
+
+                <div class="center">
+                    <div class="vals">
+
+                        <?php foreach ($step['vals'] as $val): ?>
+                            <a href="#" val="<?= $val['val'] ?>" class="val">
+                                <span class="val_desc"><?= $val['desc'] ?></span><br>
+                                <span class="val_name"><?= $val['name'] ?></span>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div class="clearer">&nbsp;</div>
+            </div>
+
+            <?php
+            $num++;
+        endforeach; ?>
+
+    </div>
+	
+   
+
+</div>

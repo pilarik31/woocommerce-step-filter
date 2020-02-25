@@ -1,0 +1,36 @@
+<div class="wrap">
+    <h1>
+        WooCommerce step filter
+        <a href="/wp-admin/admin.php?page=new-woocommerce-step-filter" class="page-title-action">Vytvořit filtr</a>
+    </h1><br/><br/>
+
+    <table class="wp-list-table widefat fixed striped posts">
+        <thead>
+        <tr>
+            <th scope="col" class="manage-column">Název</th>
+            <th scope="col" class="manage-column">Popis</th>
+            <th scope="col" class="manage-column">Kroky</th>
+            <th scope="col" class="manage-column">Shortcode</th>
+        </tr>
+        </thead>
+
+        <?php
+        foreach ($filters as $f) {
+            echo '<tr>';
+            echo '<td>' . $f['name'] . '</td>';
+            echo '<td>' . $f['desc'] . '</td><td>';
+            $stepNum = 1;
+            foreach ($f['step'] as $step) {
+                echo '<b>'.$stepNum.'.</b> '.$step['name'].'<br>';
+                $stepNum++;
+            }
+            echo '</td><td>[STEP_FILTER id="'.$f['id'].'"]<br><br>
+            <a href="/wp-admin/admin.php?page=new-woocommerce-step-filter&filterID='.$f['id'].'" class="page-title-action">Upravit filtr</a>
+            <a href="/wp-admin/admin.php?page=woocommerce-step-filter&deleteID='.$f['id'].'" class="page-title-action">Smazat</a>
+            </td>';
+            echo '</tr>';
+        }
+        ?>
+
+    </table>
+</div>
