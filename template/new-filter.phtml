@@ -1,717 +1,1433 @@
-<style>
-    .column {
-        width: 100%;
-        float: left;
-        padding: 10px;
-        padding-bottom: 50px;
-        background: white;
-        border-radius: 5px;
-    }
-
-    .portlet {
-        margin: 0 1em 1em 0;
-        padding: 0.3em;
-        border: 2px solid #000000;
-        border-radius: 10px;
-        background: white;
-    }
-
-    .portlet-header {
-        padding: 0.2em 0.3em;
-        margin-bottom: 0.5em;
-        position: relative;
-
-        border: 1px solid #dddddd;
-        background: #e9e9e9;
-        color: #333333;
-        font-weight: bold;
-        border-radius: 5px;
-    }
-
-    .moveVal, .moveStep {
-        cursor: move;
-    }
-
-    .portlet-header input[name="step_name"] {
-        width: 50%;
-    }
-
-    .portlet-toggle {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        margin-top: -8px;
-    }
-
-    .portlet-content {
-        padding: 0.4em;
-    }
-
-    .portlet-content textarea {
-        width: 100%;
-    }
-
-    .portlet-placeholder {
-        border: 1px dotted black;
-        margin: 0 1em 1em 0;
-        height: 50px;
-    }
-
-    .actions {
-        float: right;
-    }
-
-    button {
-        cursor: pointer;
-    }
-
-    .vals {
-        padding: 10px;
-        border: 1px solid lightgrey;
-        border-radius: 10px;
-        background: #ececec;
-    }
-
-    .val {
-        padding: 10px;
-        background: white;
-        border-radius: 5px;
-        margin: 10px;
-    }
-
-    .val_name {
-        width: 300px;
-    }
-
-    #vals_lists {
-        display: none;
-    }
-
-
-
-    #saving {
-        position: fixed;
-        top: 50px;
-        background: rgba(255, 255, 255, 0.75);
-        padding: 10px;
-        z-index: 99999;
-        left: 50%;
-        border-radius: 10px;
-        display: none;
-    }
-
-    .sk-circle {
-        margin: auto;
-        width: 40px;
-        height: 40px;
-        position: relative;
-    }
-    .sk-circle .sk-child {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
-    .sk-circle .sk-child:before {
-        content: '';
-        display: block;
-        margin: 0 auto;
-        width: 15%;
-        height: 15%;
-        background-color: #333;
-        border-radius: 100%;
-        -webkit-animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
-        animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
-    }
-    .sk-circle .sk-circle2 {
-        -webkit-transform: rotate(30deg);
-        -ms-transform: rotate(30deg);
-        transform: rotate(30deg); }
-    .sk-circle .sk-circle3 {
-        -webkit-transform: rotate(60deg);
-        -ms-transform: rotate(60deg);
-        transform: rotate(60deg); }
-    .sk-circle .sk-circle4 {
-        -webkit-transform: rotate(90deg);
-        -ms-transform: rotate(90deg);
-        transform: rotate(90deg); }
-    .sk-circle .sk-circle5 {
-        -webkit-transform: rotate(120deg);
-        -ms-transform: rotate(120deg);
-        transform: rotate(120deg); }
-    .sk-circle .sk-circle6 {
-        -webkit-transform: rotate(150deg);
-        -ms-transform: rotate(150deg);
-        transform: rotate(150deg); }
-    .sk-circle .sk-circle7 {
-        -webkit-transform: rotate(180deg);
-        -ms-transform: rotate(180deg);
-        transform: rotate(180deg); }
-    .sk-circle .sk-circle8 {
-        -webkit-transform: rotate(210deg);
-        -ms-transform: rotate(210deg);
-        transform: rotate(210deg); }
-    .sk-circle .sk-circle9 {
-        -webkit-transform: rotate(240deg);
-        -ms-transform: rotate(240deg);
-        transform: rotate(240deg); }
-    .sk-circle .sk-circle10 {
-        -webkit-transform: rotate(270deg);
-        -ms-transform: rotate(270deg);
-        transform: rotate(270deg); }
-    .sk-circle .sk-circle11 {
-        -webkit-transform: rotate(300deg);
-        -ms-transform: rotate(300deg);
-        transform: rotate(300deg); }
-    .sk-circle .sk-circle12 {
-        -webkit-transform: rotate(330deg);
-        -ms-transform: rotate(330deg);
-        transform: rotate(330deg); }
-    .sk-circle .sk-circle2:before {
-        -webkit-animation-delay: -1.1s;
-        animation-delay: -1.1s; }
-    .sk-circle .sk-circle3:before {
-        -webkit-animation-delay: -1s;
-        animation-delay: -1s; }
-    .sk-circle .sk-circle4:before {
-        -webkit-animation-delay: -0.9s;
-        animation-delay: -0.9s; }
-    .sk-circle .sk-circle5:before {
-        -webkit-animation-delay: -0.8s;
-        animation-delay: -0.8s; }
-    .sk-circle .sk-circle6:before {
-        -webkit-animation-delay: -0.7s;
-        animation-delay: -0.7s; }
-    .sk-circle .sk-circle7:before {
-        -webkit-animation-delay: -0.6s;
-        animation-delay: -0.6s; }
-    .sk-circle .sk-circle8:before {
-        -webkit-animation-delay: -0.5s;
-        animation-delay: -0.5s; }
-    .sk-circle .sk-circle9:before {
-        -webkit-animation-delay: -0.4s;
-        animation-delay: -0.4s; }
-    .sk-circle .sk-circle10:before {
-        -webkit-animation-delay: -0.3s;
-        animation-delay: -0.3s; }
-    .sk-circle .sk-circle11:before {
-        -webkit-animation-delay: -0.2s;
-        animation-delay: -0.2s; }
-    .sk-circle .sk-circle12:before {
-        -webkit-animation-delay: -0.1s;
-        animation-delay: -0.1s; }
-
-    @-webkit-keyframes sk-circleBounceDelay {
-        0%, 80%, 100% {
-            -webkit-transform: scale(0);
-            transform: scale(0);
-        } 40% {
-              -webkit-transform: scale(1);
-              transform: scale(1);
-          }
-    }
-
-    @keyframes sk-circleBounceDelay {
-        0%, 80%, 100% {
-            -webkit-transform: scale(0);
-            transform: scale(0);
-        } 40% {
-              -webkit-transform: scale(1);
-              transform: scale(1);
-          }
-    }
-
-    .saveButton {
-        position: fixed;
-        bottom: 0;
-        text-align: center;
-        background: rgba(211, 211, 211, 0.39);
-        width: 100%;
-        left: 0;
-        padding: 5px;
-        font-size: 16px;
-    }
-</style>
-
-<div id="saving">
-    <div class="sk-circle">
-        <div class="sk-circle1 sk-child"></div>
-        <div class="sk-circle2 sk-child"></div>
-        <div class="sk-circle3 sk-child"></div>
-        <div class="sk-circle4 sk-child"></div>
-        <div class="sk-circle5 sk-child"></div>
-        <div class="sk-circle6 sk-child"></div>
-        <div class="sk-circle7 sk-child"></div>
-        <div class="sk-circle8 sk-child"></div>
-        <div class="sk-circle9 sk-child"></div>
-        <div class="sk-circle10 sk-child"></div>
-        <div class="sk-circle11 sk-child"></div>
-        <div class="sk-circle12 sk-child"></div>
-    </div>
-    <h2>Ukládám...</h2>
-</div>
-
-<?php
-$filterID = 'false';
-if (isset($_GET['filterID'])) {
-    $filterID = $_GET['filterID'];
-}
-
-echo '<input id="filterID" value="' . $filterID . '" class="hidden" />';
-?>
-
-<div id="emptyStep" class="hidden">
-    <div class="portlet step">
-        <div class="portlet-header">
-            <input name="step_name" placeholder="Název kroku"/>
-            <label for="step_param">Parametr</label>
-            <?php echo $attrSelect; ?>
-            <label for="multiselect">Multiselect</label>
-            <input name="multiselect" type="checkbox"/>
-            <div class="actions">
-                <button class="moveStep" title="Přesunout"><span class="dashicons dashicons-move"></span>
-                    <button class="delete" title="Smazat"><span class="dashicons dashicons-trash"></span>
-                    </button>
-            </div>
-        </div>
-        <div class="portlet-content">
-            <textarea name="step_desc"></textarea>
-            <br/><br/>
-            <h4>Hodnoty:</h4>
-            <button class="page-title-action addVal">Přidat hodnotu</button>
-            <br/>
-            <div class="vals">
-
-            </div>
-            <br/>
-            <button class="page-title-action addVal">Přidat hodnotu</button>
-        </div>
-    </div>
-</div>
-
-
-<div id="emptyVal" class="hidden">
-    <div class="val">
-        <div class="portlet-header">
-            <input class="val_name" name="val_name" placeholder="Název hodnoty"/>
-            <div class="actions">
-                <button class="moveVal" title="Přesunout"><span
-                        class="dashicons dashicons-move"></span>
-                    <button class="deleteVal" title="Smazat">
-                        <span class="dashicons dashicons-trash"></span>
-                    </button>
-            </div>
-            <label for="val_param">Parametr</label>
-            <span class="val_param"></span>
-        </div>
-        <br/><br/>
-        <textarea name="val_editor"></textarea>
-    </div>
-</div>
-
-<?php echo $f->allValSelect(); ?>
-
-
-<div class="wrap">
-    <h1>
-        Vytváření nového filtru
-        <a href="/wp-admin/admin.php?page=woocommerce-step-filter" class="page-title-action">Zpět na přehled filtrů</a>
-    </h1><br/><br/>
-
-    <form id="createFilter">
-
-        <div id="titlewrap">
-            <label class="" id="name-prompt-text" for="title">Zadejte název</label>
-            <input type="text" name="name" size="30" id="name" spellcheck="true" autocomplete="off"
-                   value="<?= $data['name'] ?>">
-        </div>
-        <br/><br/>
-
-
-        <?php
-        $settings = array(
-            'teeny' => true,
-            'textarea_rows' => 10,
-            'tabindex' => 1
-        );
-        wp_editor($data['desc'], 'filter_desc', $settings);
-        ?>
-
-        <!--<textarea name="filterDesc" id="filterDesc"></textarea>-->
-
-        <h3>Kroky:</h3>
-        <button class="addStep page-title-action">Přidat krok</button>
-        <br/>
-        <div id="steps" class="column">
-
-
-            <?php
-            if ($data['step']):
-                $step = 1;
-                foreach ($data['step'] as $s):
-                    ?>
-                    <div class="portlet step">
-                        <div class="portlet-header">
-                            <input name="step_name" placeholder="Název kroku" value="<?= $s['name'] ?>"/>
-                            <label for="step_param">Parametr</label>
-                            <?php echo $f->attrSelect($s['attr']); ?>
-                            <label for="multiselect">Multiselect</label>
-                            <input name="multiselect" type="checkbox" <?php if($s['multi'] == '1') echo 'checked="true"'; ?> />
-                            <div class="actions">
-                                <button class="moveStep" title="Přesunout"><span
-                                        class="dashicons dashicons-move"></span>
-                                    <button class="delete" title="Smazat"><span
-                                            class="dashicons dashicons-trash"></span>
-                                    </button>
-                            </div>
-                        </div>
-                        <div class="portlet-content">
-                    <span class="editor">
-                        <?php wp_editor($s['desc'], 'step_desc'.$step, $settings); ?>
-                    </span>
-
-                            <br/><br/>
-                            <h4>Hodnoty:</h4>
-                            <button class="page-title-action addVal">Přidat hodnotu</button>
-                            <br/>
-                            <div class="vals">
-                                <?php
-                                if ($s['vals']):
-                                    $val = 1;
-                                    foreach ($s['vals'] as $v):
-                                        ?>
-
-                                        <div class="val">
-                                            <div class="portlet-header">
-                                                <input class="val_name" name="val_name" placeholder="Název hodnoty" value="<?= $v['name'] ?>" />
-                                                <div class="actions">
-                                                    <button class="moveVal" title="Přesunout"><span
-                                                            class="dashicons dashicons-move"></span>
-                                                        <button class="deleteVal" title="Smazat">
-                                                            <span class="dashicons dashicons-trash"></span>
-                                                        </button>
-                                                </div>
-                                                <label for="val_param">Parametr</label>
-                                                <span class="val_param">
-                                                    <?php echo $f->valSelect($s['attr'], $v['val']); ?>
-                                                </span>
-                                            </div>
-                                            <br/><br/>
-                                            <?php wp_editor($v['desc'], 'val_editor'.$val.'_step'.$step, $settings); ?>
-                                        </div>
-
-                                    <?php $val++; endforeach; endif; ?>
-
-                            </div>
-                            <br/>
-                            <button class="page-title-action addVal">Přidat hodnotu</button>
-                        </div>
-                    </div>
-
-                <?php $step++; endforeach; endif; ?>
-
-        </div>
-        <br/>
-        <button class="addStep page-title-action">Přidat krok</button>
-
-
-    </form>
-</div>
-<div class="saveButton"><button id="manualSave">Uložit</button></div>
-
-<script>
-    var $ = jQuery;
-    $(function () {
-        //řazení kroků
-        $('.column').sortable({
-            connectWith: ".column",
-            handle: ".moveStep",
-            cancel: ".portlet-toggle, input, select",
-            placeholder: "portlet-placeholder ui-corner-all"
-        });
-
-        $(".portlet")
-            .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
-            .find(".portlet-header")
-            .addClass("ui-widget-header ui-corner-all")
-            .prepend("<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
-
-        $(".portlet-toggle").on("click", function () {
-            var icon = $(this);
-            icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
-            icon.closest(".portlet").find(".portlet-content").toggle();
-        });
-
-        valSort();
-
-        $(".val")
-            .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
-            .find(".portlet-header")
-            .addClass("ui-widget-header ui-corner-all")
-            .prepend("<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
-
-        $(".portlet-toggle").on("click", function () {
-            var icon = $(this);
-            icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
-            icon.closest(".portlet").find(".portlet-content").toggle();
-        });
-
-        /*tinymce.init({
-         selector: '.filterDesc',
-         height: 500,
-         plugins: [
-         'advlist autolink lists link image charmap print preview anchor',
-         'searchreplace visualblocks code fullscreen',
-         'insertdatetime media table contextmenu paste code'
-         ],
-         toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-         content_css: '//www.tinymce.com/css/codepen.min.css'
-         });*/
-
-        //textarea_to_tinymce('filterDesc');
-
-    });
-
-    //manuální uložení
-    $(document).on('click', '#manualSave', function () {
-        saveFilter();
-    });
-
-    //přidání nového kroku
-    $(document).on('click', '.addStep', function (e) {
-        e.preventDefault();
-        var step = $('#emptyStep .step').clone();
-        var date = new Date().getTime();
-
-        step.addClass('step' + date);
-        $('#steps').append(step);
-        saveFilter();
-    });
-
-    //odstranění kroku
-    $(document).on('click', '.delete', function (e) {
-        e.preventDefault();
-        $(this).parent().parent().parent().fadeOut('fast', function () {
-            $(this).remove();
-            saveFilter();
-        });
-    });
-
-    //změna select listů v hodnotách při změně atributu kroku
-    $(document).on('change', 'select[name="step_param"]', function () {
-        var attr = $(this).val();
-        var selectVal = $('#vals_lists').find('select[attr="' + attr + '"]').clone();
-        $(this).parent().parent().find('.val_param').html(selectVal);
-    });
-
-
-    //odstranění hodnoty
-    $(document).on('click', '.deleteVal', function (e) {
-        e.preventDefault();
-        $(this).parent().parent().parent().fadeOut('fast', function () {
-            $(this).remove();
-            saveFilter();
-        });
-    });
-
-    //igrnorování tlačítek
-    $(document).on('click', 'button', function (e) {
-        e.preventDefault();
-    });
-
-    //přidání nové hodnoty
-    $(document).on('click', '.addVal', function () {
-        var val = $('#emptyVal .val').clone();
-        var date = new Date().getTime();
-
-        var attr = $(this).parent().parent().find('select[name="step_param"]').val();
-        var selectVal = $('#vals_lists').find('select[attr="' + attr + '"]').clone();
-        //val.find('.val_param').html(selectVal);
-
-        val.addClass('val' + date);
-        $(this).siblings('.vals').append(val);
-        $(this).parent().parent().find('.val_param:last').html(selectVal);
-        valSort();
-        saveFilter();
-    });
-
-    //řazení hodnot v rámci kroku
-    function valSort() {
-        $('.vals').sortable({
-            connectWith: ".vals",
-            handle: ".moveVal",
-            cancel: ".portlet-toggle, input, select",
-            placeholder: "portlet-placeholder ui-corner-all",
-            stop: function(event, ui) {
-                saveFilter();
-            }
-        });
-    }
-
-
-    var saving = false;
-
-    //uložení filtru
-    function saveFilter() {
-        if(saving) {
-            return;
-        }
-
-        saving = true;
-
-        $('#saving').fadeIn();
-        var filterName = $('#createFilter').find('input[name="name"]').val();
-        var filterDesc = tmce_getContent('filter_desc', 'filter_desc');
-        var filterID = $('#filterID').val();
-
-        var steps = {};
-        var stepNum = 1;
-        $('#steps .step').each(function (i, obj) {
-            steps[i] = {};
-            steps[i].name = $(this).find('input[name="step_name"]').val();
-            steps[i].attr = $(this).find('select[name="step_param"]').val();
-            steps[i].multi = $(this).find('input[name="multiselect"]').is(':checked') ? 1 : 0;
-            steps[i].desc = tmce_getContent('step_desc'+stepNum, 'step_desc'+stepNum); //$(this).find('textarea[name="step_desc"]').val();
-
-            //var vals = {};
-            steps[i].vals = {};
-            var valNum = 1;
-            $(this).find('.vals .val').each(function (vi, vobj) {
-                steps[i].vals[vi] = {};
-                steps[i].vals[vi].name = $(this).find('input[name="val_name"]').val();
-                steps[i].vals[vi].val = $(this).find('select[name="val_param"]').val();
-                steps[i].vals[vi].desc = tmce_getContent('val_editor'+valNum+'_step'+stepNum, 'val_editor'+valNum+'_step'+stepNum); //$(this).find('textarea[name="val_editor"]').val();
-
-                valNum++;
-            });
-            //steps[i].vals = vals;
-
-            // console.log(steps);
-            stepNum++;
-        });
-
-        $.ajax({
-            type: 'post',
-            dataType: 'json',
-            url: window.location.origin + '/wp-admin/admin-ajax.php',
-            data: {
-                action: 'save_filter',
-                filterID: filterID,
-                filterName: filterName,
-                filterDesc: filterDesc,
-                steps: steps
-            },
-            success: function (data) {
-                if (data) {
-                    if (filterID == 'false') {
-                        var url = window.location.href;
-                        window.location.href = url + '&filterID=' + data.id;
-                    }
-                    $('#saving').fadeOut();
-
-                }
-            }
-        });
-
-        saving = false;
-    }
-
-    //Spuštění uložení při změně
-    $(document).on('change', 'select', function () {
-        saveFilter();
-    });
-
-    $(document).on('change', 'input', function () {
-        saveFilter();
-    });
-
-
-    //editor
-    function textarea_to_tinymce(id) {
-        if (typeof( tinyMCE ) == "object" && typeof( tinyMCE.execCommand ) == "function") {
-            tinyMCE.execCommand("mceAddEditor", false, id);
-            tinyMCE.execCommand('mceAddControl', false, id);
-        }
-    }
-
-
-    //získání editoru
-    function getEditor(name) {
-        $.ajax({
-            type: 'post',
-            dataType: 'json',
-            url: window.location.origin + '/wp-admin/admin-ajax.php',
-            data: {action: 'get_editor', name: name},
-            success: function (data) {
-                if (data) {
-                    $('.' + name).find('.editor').html(data.editor);
-                }
-            }
-        });
-    }
-
-
-    //získání dat editoru
-    function tmce_getContent(editor_id, textarea_id) {
-        if ( typeof editor_id == 'undefined' ) editor_id = wpActiveEditor;
-        if ( typeof textarea_id == 'undefined' ) textarea_id = editor_id;
-
-        if ( jQuery('#wp-'+editor_id+'-wrap').hasClass('tmce-active') && tinyMCE.get(editor_id) ) {
-            return tinyMCE.get(editor_id).getContent();
-        }else{
-            return jQuery('#'+textarea_id).val();
-        }
-    }
-
-
-    // Uploading files
-    /* var file_frame;
-     var wp_media_post_id = wp.media.model.settings.post.id; // Store the old id
-     var set_to_post_id = 10; // Set this
-
-     jQuery('.upload_image_button').live('click', function (event) {
-
-     event.preventDefault();
-
-     // If the media frame already exists, reopen it.
-     if (file_frame) {
-     // Set the post ID to what we want
-     file_frame.uploader.uploader.param('post_id', set_to_post_id);
-     // Open frame
-     file_frame.open();
-     return;
-     } else {
-     // Set the wp.media post id so the uploader grabs the ID we want when initialised
-     wp.media.model.settings.post.id = set_to_post_id;
-     }
-
-     // Create the media frame.
-     file_frame = wp.media.frames.file_frame = wp.media({
-     title: jQuery(this).data('uploader_title'),
-     button: {
-     text: jQuery(this).data('uploader_button_text'),
-     },
-     multiple: false  // Set to true to allow multiple files to be selected
-     });
-
-     // When an image is selected, run a callback.
-     file_frame.on('select', function () {
-     // We set multiple to false so only get one image from the uploader
-     attachment = file_frame.state().get('selection').first().toJSON();
-
-     // Do something with attachment.id and/or attachment.url here
-
-     // Restore the main post ID
-     wp.media.model.settings.post.id = wp_media_post_id;
-     });
-
-     // Finally, open the modal
-     file_frame.open();
-     });
-
-     // Restore the main ID when the add media button is pressed
-     jQuery('a.add_media').on('click', function () {
-     wp.media.model.settings.post.id = wp_media_post_id;
-     });*/
+<style>
+
+    .column {
+
+        width: 100%;
+
+        float: left;
+
+        padding: 10px;
+
+        padding-bottom: 50px;
+
+        background: white;
+
+        border-radius: 5px;
+
+    }
+
+
+
+    .portlet {
+
+        margin: 0 1em 1em 0;
+
+        padding: 0.3em;
+
+        border: 2px solid #000000;
+
+        border-radius: 10px;
+
+        background: white;
+
+    }
+
+
+
+    .portlet-header {
+
+        padding: 0.2em 0.3em;
+
+        margin-bottom: 0.5em;
+
+        position: relative;
+
+
+
+        border: 1px solid #dddddd;
+
+        background: #e9e9e9;
+
+        color: #333333;
+
+        font-weight: bold;
+
+        border-radius: 5px;
+
+    }
+
+
+
+    .moveVal, .moveStep {
+
+        cursor: move;
+
+    }
+
+
+
+    .portlet-header input[name="step_name"] {
+
+        width: 50%;
+
+    }
+
+
+
+    .portlet-toggle {
+
+        position: absolute;
+
+        top: 50%;
+
+        right: 0;
+
+        margin-top: -8px;
+
+    }
+
+
+
+    .portlet-content {
+
+        padding: 0.4em;
+
+    }
+
+
+
+    .portlet-content textarea {
+
+        width: 100%;
+
+    }
+
+
+
+    .portlet-placeholder {
+
+        border: 1px dotted black;
+
+        margin: 0 1em 1em 0;
+
+        height: 50px;
+
+    }
+
+
+
+    .actions {
+
+        float: right;
+
+    }
+
+
+
+    button {
+
+        cursor: pointer;
+
+    }
+
+
+
+    .vals {
+
+        padding: 10px;
+
+        border: 1px solid lightgrey;
+
+        border-radius: 10px;
+
+        background: #ececec;
+
+    }
+
+
+
+    .val {
+
+        padding: 10px;
+
+        background: white;
+
+        border-radius: 5px;
+
+        margin: 10px;
+
+    }
+
+
+
+    .val_name {
+
+        width: 300px;
+
+    }
+
+
+
+    #vals_lists {
+
+        display: none;
+
+    }
+
+
+
+
+
+
+
+    #saving {
+
+        position: fixed;
+
+        top: 50px;
+
+        background: rgba(255, 255, 255, 0.75);
+
+        padding: 10px;
+
+        z-index: 99999;
+
+        left: 50%;
+
+        border-radius: 10px;
+
+        display: none;
+
+    }
+
+
+
+    .sk-circle {
+
+        margin: auto;
+
+        width: 40px;
+
+        height: 40px;
+
+        position: relative;
+
+    }
+
+    .sk-circle .sk-child {
+
+        width: 100%;
+
+        height: 100%;
+
+        position: absolute;
+
+        left: 0;
+
+        top: 0;
+
+    }
+
+    .sk-circle .sk-child:before {
+
+        content: '';
+
+        display: block;
+
+        margin: 0 auto;
+
+        width: 15%;
+
+        height: 15%;
+
+        background-color: #333;
+
+        border-radius: 100%;
+
+        -webkit-animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+
+        animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+
+    }
+
+    .sk-circle .sk-circle2 {
+
+        -webkit-transform: rotate(30deg);
+
+        -ms-transform: rotate(30deg);
+
+        transform: rotate(30deg); }
+
+    .sk-circle .sk-circle3 {
+
+        -webkit-transform: rotate(60deg);
+
+        -ms-transform: rotate(60deg);
+
+        transform: rotate(60deg); }
+
+    .sk-circle .sk-circ$attr_select
+
+        -webkit-transform: rotate(90deg);
+
+        -ms-transform: rotate(90deg);
+
+        transform: rotate(90deg); }
+
+    .sk-circle .sk-circle5 {
+
+        -webkit-transform: rotate(120deg);
+
+        -ms-transform: rotate(120deg);
+
+        transform: rotate(120deg); }
+
+    .sk-circle .sk-circle6 {
+
+        -webkit-transform: rotate(150deg);
+
+        -ms-transform: rotate(150deg);
+
+        transform: rotate(150deg); }
+
+    .sk-circle .sk-circle7 {
+
+        -webkit-transform: rotate(180deg);
+
+        -ms-transform: rotate(180deg);
+
+        transform: rotate(180deg); }
+
+    .sk-circle .sk-circle8 {
+
+        -webkit-transform: rotate(210deg);
+
+        -ms-transform: rotate(210deg);
+
+        transform: rotate(210deg); }
+
+    .sk-circle .sk-circle9 {
+
+        -webkit-transform: rotate(240deg);
+
+        -ms-transform: rotate(240deg);
+
+        transform: rotate(240deg); }
+
+    .sk-circle .sk-circle10 {
+
+        -webkit-transform: rotate(270deg);
+
+        -ms-transform: rotate(270deg);
+
+        transform: rotate(270deg); }
+
+    .sk-circle .sk-circle11 {
+
+        -webkit-transform: rotate(300deg);
+
+        -ms-transform: rotate(300deg);
+
+        transform: rotate(300deg); }
+
+    .sk-circle .sk-circle12 {
+
+        -webkit-transform: rotate(330deg);
+
+        -ms-transform: rotate(330deg);
+
+        transform: rotate(330deg); }
+
+    .sk-circle .sk-circle2:before {
+
+        -webkit-animation-delay: -1.1s;
+
+        animation-delay: -1.1s; }
+
+    .sk-circle .sk-circle3:before {
+
+        -webkit-animation-delay: -1s;
+
+        animation-delay: -1s; }
+
+    .sk-circle .sk-circle4:before {
+
+        -webkit-animation-delay: -0.9s;
+
+        animation-delay: -0.9s; }
+
+    .sk-circle .sk-circle5:before {
+
+        -webkit-animation-delay: -0.8s;
+
+        animation-delay: -0.8s; }
+
+    .sk-circle .sk-circle6:before {
+
+        -webkit-animation-delay: -0.7s;
+
+        animation-delay: -0.7s; }
+
+    .sk-circle .sk-circle7:before {
+
+        -webkit-animation-delay: -0.6s;
+
+        animation-delay: -0.6s; }
+
+    .sk-circle .sk-circle8:before {
+
+        -webkit-animation-delay: -0.5s;
+
+        animation-delay: -0.5s; }
+
+    .sk-circle .sk-circle9:before {
+
+        -webkit-animation-delay: -0.4s;
+
+        animation-delay: -0.4s; }
+
+    .sk-circle .sk-circle10:before {
+
+        -webkit-animation-delay: -0.3s;
+
+        animation-delay: -0.3s; }
+
+    .sk-circle .sk-circle11:before {
+
+        -webkit-animation-delay: -0.2s;
+
+        animation-delay: -0.2s; }
+
+    .sk-circle .sk-circle12:before {
+
+        -webkit-animation-delay: -0.1s;
+
+        animation-delay: -0.1s; }
+
+
+
+    @-webkit-keyframes sk-circleBounceDelay {
+
+        0%, 80%, 100% {
+
+            -webkit-transform: scale(0);
+
+            transform: scale(0);
+
+        } 40% {
+
+              -webkit-transform: scale(1);
+
+              transform: scale(1);
+
+          }
+
+    }
+
+
+
+    @keyframes sk-circleBounceDelay {
+
+        0%, 80%, 100% {
+
+            -webkit-transform: scale(0);
+
+            transform: scale(0);
+
+        } 40% {
+
+              -webkit-transform: scale(1);
+
+              transform: scale(1);
+
+          }
+
+    }
+
+
+
+    .saveButton {
+
+        position: fixed;
+
+        bottom: 0;
+
+        text-align: center;
+
+        background: rgba(211, 211, 211, 0.39);
+
+        width: 100%;
+
+        left: 0;
+
+        padding: 5px;
+
+        font-size: 16px;
+
+    }
+
+</style>
+
+
+
+<div id="saving">
+
+    <div class="sk-circle">
+
+        <div class="sk-circle1 sk-child"></div>
+
+        <div class="sk-circle2 sk-child"></div>
+
+        <div class="sk-circle3 sk-child"></div>
+
+        <div class="sk-circle4 sk-child"></div>
+
+        <div class="sk-circle5 sk-child"></div>
+
+        <div class="sk-circle6 sk-child"></div>
+
+        <div class="sk-circle7 sk-child"></div>
+
+        <div class="sk-circle8 sk-child"></div>
+
+        <div class="sk-circle9 sk-child"></div>
+
+        <div class="sk-circle10 sk-child"></div>
+
+        <div class="sk-circle11 sk-child"></div>
+
+        <div class="sk-circle12 sk-child"></div>
+
+    </div>
+
+    <h2>Ukládám...</h2>
+
+</div>
+
+
+
+<?php
+
+$filter_id = 'false';
+
+if (isset($_GET['filterID'])) {
+
+    $filter_id = $_GET['filterID'];
+
+}
+
+
+
+echo '<input id="filterID" value="' . $filter_id . '" class="hidden" />';
+
+?>
+
+
+
+<div id="emptyStep" class="hidden">
+
+    <div class="portlet step">
+
+        <div class="portlet-header">
+
+            <input name="step_name" placeholder="Název kroku"/>
+
+            <label for="step_param">Parametr</label>
+
+            <?php echo $attrSelect; ?>
+
+            <label for="multiselect">Multiselect</label>
+
+            <input name="multiselect" type="checkbox"/>
+
+            <div class="actions">
+
+                <button class="moveStep" title="Přesunout"><span class="dashicons dashicons-move"></span>
+
+                    <button class="delete" title="Smazat"><span class="dashicons dashicons-trash"></span>
+
+                    </button>
+
+            </div>
+
+        </div>
+
+        <div class="portlet-content">
+
+            <textarea name="step_desc"></textarea>
+
+            <br/><br/>
+
+            <h4>Hodnoty:</h4>
+
+            <button class="page-title-action addVal">Přidat hodnotu</button>
+
+            <br/>
+
+            <div class="vals">
+
+
+
+            </div>
+
+            <br/>
+
+            <button class="page-title-action addVal">Přidat hodnotu</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<div id="emptyVal" class="hidden">
+
+    <div class="val">
+
+        <div class="portlet-header">
+
+            <input class="val_name" name="val_name" placeholder="Název hodnoty"/>
+
+            <div class="actions">
+
+                <button class="moveVal" title="Přesunout"><span
+
+                        class="dashicons dashicons-move"></span>
+
+                    <button class="deleteVal" title="Smazat">
+
+                        <span class="dashicons dashicons-trash"></span>
+
+                    </button>
+
+            </div>
+
+            <label for="val_param">Parametr</label>
+
+            <span class="val_param"></span>
+
+        </div>
+
+        <br/><br/>
+
+        <textarea name="val_editor"></textarea>
+
+    </div>
+
+</div>
+
+
+
+<?php echo $f->allValSelect(); ?>
+
+
+
+
+
+<div class="wrap">
+
+    <h1>
+
+        Vytváření nového filtru
+
+        <a href="/wp-admin/admin.php?page=woocommerce-step-filter" class="page-title-action">Zpět na přehled filtrů</a>
+
+    </h1><br/><br/>
+
+
+
+    <form id="createFilter">
+
+
+
+        <div id="titlewrap">
+
+            <label class="" id="name-prompt-text" for="title">Zadejte název</label>
+
+            <input type="text" name="name" size="30" id="name" spellcheck="true" autocomplete="off"
+
+                   value="<?= $data['name'] ?>">
+
+        </div>
+
+        <br/><br/>
+
+
+
+
+
+        <?php
+
+        $settings = array(
+
+            'teeny' => true,
+
+            'textarea_rows' => 10,
+
+            'tabindex' => 1
+
+        );
+
+        wp_editor($data['desc'], 'filter_desc', $settings);
+
+        ?>
+
+
+
+        <!--<textarea name="filterDesc" id="filterDesc"></textarea>-->
+
+
+
+        <h3>Kroky:</h3>
+
+        <button class="addStep page-title-action">Přidat krok</button>
+
+        <br/>
+
+        <div id="steps" class="column">
+
+
+
+
+
+            <?php
+
+            if ($data['step']):
+
+                $step = 1;
+
+                foreach ($data['step'] as $s):
+
+                    ?>
+
+                    <div class="portlet step">
+
+                        <div class="portlet-header">
+
+                            <input name="step_name" placeholder="Název kroku" value="<?= $s['name'] ?>"/>
+
+                            <label for="step_param">Parametr</label>
+
+                            <?php echo $f->attrSelect($s['attr']); ?>
+
+                            <label for="multiselect">Multiselect</label>
+
+                            <input name="multiselect" type="checkbox" <?php if($s['multi'] == '1') echo 'checked="true"'; ?> />
+
+                            <div class="actions">
+
+                                <button class="moveStep" title="Přesunout"><span
+
+                                        class="dashicons dashicons-move"></span>
+
+                                    <button class="delete" title="Smazat"><span
+
+                                            class="dashicons dashicons-trash"></span>
+
+                                    </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="portlet-content">
+
+                    <span class="editor">
+
+                        <?php wp_editor($s['desc'], 'step_desc'.$step, $settings); ?>
+
+                    </span>
+
+
+
+                            <br/><br/>
+
+                            <h4>Hodnoty:</h4>
+
+                            <button class="page-title-action addVal">Přidat hodnotu</button>
+
+                            <br/>
+
+                            <div class="vals">
+
+                                <?php
+
+                                if ($s['vals']):
+
+                                    $val = 1;
+
+                                    foreach ($s['vals'] as $v):
+
+                                        ?>
+
+
+
+                                        <div class="val">
+
+                                            <div class="portlet-header">
+
+                                                <input class="val_name" name="val_name" placeholder="Název hodnoty" value="<?= $v['name'] ?>" />
+
+                                                <div class="actions">
+
+                                                    <button class="moveVal" title="Přesunout"><span
+
+                                                            class="dashicons dashicons-move"></span>
+
+                                                        <button class="deleteVal" title="Smazat">
+
+                                                            <span class="dashicons dashicons-trash"></span>
+
+                                                        </button>
+
+                                                </div>
+
+                                                <label for="val_param">Parametr</label>
+
+                                                <span class="val_param">
+
+                                                    <?php echo $f->valSelect($s['attr'], $v['val']); ?>
+
+                                                </span>
+
+                                            </div>
+
+                                            <br/><br/>
+
+                                            <?php wp_editor($v['desc'], 'val_editor'.$val.'_step'.$step, $settings); ?>
+
+                                        </div>
+
+
+
+                                    <?php $val++; endforeach; endif; ?>
+
+
+
+                            </div>
+
+                            <br/>
+
+                            <button class="page-title-action addVal">Přidat hodnotu</button>
+
+                        </div>
+
+                    </div>
+
+
+
+                <?php $step++; endforeach; endif; ?>
+
+
+
+        </div>
+
+        <br/>
+
+        <button class="addStep page-title-action">Přidat krok</button>
+
+
+
+
+
+    </form>
+
+</div>
+
+<div class="saveButton"><button id="manualSave">Uložit</button></div>
+
+
+
+<script>
+
+    var $ = jQuery;
+
+    $(function () {
+
+        //řazení kroků
+
+        $('.column').sortable({
+
+            connectWith: ".column",
+
+            handle: ".moveStep",
+
+            cancel: ".portlet-toggle, input, select",
+
+            placeholder: "portlet-placeholder ui-corner-all"
+
+        });
+
+
+
+        $(".portlet")
+
+            .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+
+            .find(".portlet-header")
+
+            .addClass("ui-widget-header ui-corner-all")
+
+            .prepend("<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+
+
+
+        $(".portlet-toggle").on("click", function () {
+
+            var icon = $(this);
+
+            icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
+
+            icon.closest(".portlet").find(".portlet-content").toggle();
+
+        });
+
+
+
+        valSort();
+
+
+
+        $(".val")
+
+            .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+
+            .find(".portlet-header")
+
+            .addClass("ui-widget-header ui-corner-all")
+
+            .prepend("<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+
+
+
+        $(".portlet-toggle").on("click", function () {
+
+            var icon = $(this);
+
+            icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
+
+            icon.closest(".portlet").find(".portlet-content").toggle();
+
+        });
+
+
+
+        /*tinymce.init({
+
+         selector: '.filterDesc',
+
+         height: 500,
+
+         plugins: [
+
+         'advlist autolink lists link image charmap print preview anchor',
+
+         'searchreplace visualblocks code fullscreen',
+
+         'insertdatetime media table contextmenu paste code'
+
+         ],
+
+         toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+
+         content_css: '//www.tinymce.com/css/codepen.min.css'
+
+         });*/
+
+
+
+        //textarea_to_tinymce('filterDesc');
+
+
+
+    });
+
+
+
+    //manuální uložení
+
+    $(document).on('click', '#manualSave', function () {
+
+        save_filter();
+
+    });
+
+
+
+    //přidání nového kroku
+
+    $(document).on('click', '.addStep', function (e) {
+
+        e.preventDefault();
+
+        var step = $('#emptyStep .step').clone();
+
+        var date = new Date().getTime();
+
+
+
+        step.addClass('step' + date);
+
+        $('#steps').append(step);
+
+        save_filter();
+
+    });
+
+
+
+    //odstranění kroku
+
+    $(document).on('click', '.delete', function (e) {
+
+        e.preventDefault();
+
+        $(this).parent().parent().parent().fadeOut('fast', function () {
+
+            $(this).remove();
+
+            save_filter();
+
+        });
+
+    });
+
+
+
+    //změna select listů v hodnotách při změně atributu kroku
+
+    $(document).on('change', 'select[name="step_param"]', function () {
+
+        var attr = $(this).val();
+
+        var selectVal = $('#vals_lists').find('select[attr="' + attr + '"]').clone();
+
+        $(this).parent().parent().find('.val_param').html(selectVal);
+
+    });
+
+
+
+
+
+    //odstranění hodnoty
+
+    $(document).on('click', '.deleteVal', function (e) {
+
+        e.preventDefault();
+
+        $(this).parent().parent().parent().fadeOut('fast', function () {
+
+            $(this).remove();
+
+            save_filter();
+
+        });
+
+    });
+
+
+
+    //igrnorování tlačítek
+
+    $(document).on('click', 'button', function (e) {
+
+        e.preventDefault();
+
+    });
+
+
+
+    //přidání nové hodnoty
+
+    $(document).on('click', '.addVal', function () {
+
+        var val = $('#emptyVal .val').clone();
+
+        var date = new Date().getTime();
+
+
+
+        var attr = $(this).parent().parent().find('select[name="step_param"]').val();
+
+        var selectVal = $('#vals_lists').find('select[attr="' + attr + '"]').clone();
+
+        //val.find('.val_param').html(selectVal);
+
+
+
+        val.addClass('val' + date);
+
+        $(this).siblings('.vals').append(val);
+
+        $(this).parent().parent().find('.val_param:last').html(selectVal);
+
+        valSort();
+
+        save_filter();
+
+    });
+
+
+
+    //řazení hodnot v rámci kroku
+
+    function valSort() {
+
+        $('.vals').sortable({
+
+            connectWith: ".vals",
+
+            handle: ".moveVal",
+
+            cancel: ".portlet-toggle, input, select",
+
+            placeholder: "portlet-placeholder ui-corner-all",
+
+            stop: function(event, ui) {
+
+                save_filter();
+
+            }
+
+        });
+
+    }
+
+
+
+
+
+    var saving = false;
+
+
+
+    //uložení filtru
+
+    function save_filter() {
+
+        if(saving) {
+
+            return;
+
+        }
+
+
+
+        saving = true;
+
+
+
+        $('#saving').fadeIn();
+
+        var filterName = $('#createFilter').find('input[name="name"]').val();
+
+        var filterDesc = tmce_getContent('filter_desc', 'filter_desc');
+
+        var filterID = $('#filterID').val();
+
+
+
+        var steps = {};
+
+        var stepNum = 1;
+
+        $('#steps .step').each(function (i, obj) {
+
+            steps[i] = {};
+
+            steps[i].name = $(this).find('input[name="step_name"]').val();
+
+            steps[i].attr = $(this).find('select[name="step_param"]').val();
+
+            steps[i].multi = $(this).find('input[name="multiselect"]').is(':checked') ? 1 : 0;
+
+            steps[i].desc = tmce_getContent('step_desc'+stepNum, 'step_desc'+stepNum); //$(this).find('textarea[name="step_desc"]').val();
+
+
+
+            //var vals = {};
+
+            steps[i].vals = {};
+
+            var valNum = 1;
+
+            $(this).find('.vals .val').each(function (vi, vobj) {
+
+                steps[i].vals[vi] = {};
+
+                steps[i].vals[vi].name = $(this).find('input[name="val_name"]').val();
+
+                steps[i].vals[vi].val = $(this).find('select[name="val_param"]').val();
+
+                steps[i].vals[vi].desc = tmce_getContent('val_editor'+valNum+'_step'+stepNum, 'val_editor'+valNum+'_step'+stepNum); //$(this).find('textarea[name="val_editor"]').val();
+
+
+
+                valNum++;
+
+            });
+
+            //steps[i].vals = vals;
+
+
+
+            // console.log(steps);
+
+            stepNum++;
+
+        });
+
+
+
+        $.ajax({
+
+            type: 'post',
+
+            dataType: 'json',
+
+            url: window.location.origin + '/wp-admin/admin-ajax.php',
+
+            data: {
+
+                action: 'save_filter',
+
+                filterID: filterID,
+
+                filterName: filterName,
+
+                filterDesc: filterDesc,
+
+                steps: steps
+
+            },
+
+            success: function (data) {
+
+                if (data) {
+
+                    if (filterID == 'false') {
+
+                        var url = window.location.href;
+
+                        window.location.href = url + '&filterID=' + data.id;
+
+                    }
+
+                    $('#saving').fadeOut();
+
+
+
+                }
+
+            }
+
+        });
+
+
+
+        saving = false;
+
+    }
+
+
+
+    //Spuštění uložení při změně
+
+    $(document).on('change', 'select', function () {
+
+        save_filter();
+
+    });
+
+
+
+    $(document).on('change', 'input', function () {
+
+        save_filter();
+
+    });
+
+
+
+
+
+    //editor
+
+    function textarea_to_tinymce(id) {
+
+        if (typeof( tinyMCE ) == "object" && typeof( tinyMCE.execCommand ) == "function") {
+
+            tinyMCE.execCommand("mceAddEditor", false, id);
+
+            tinyMCE.execCommand('mceAddControl', false, id);
+
+        }
+
+    }
+
+
+
+
+
+    //získání editoru
+
+    function getEditor(name) {
+
+        $.ajax({
+
+            type: 'post',
+
+            dataType: 'json',
+
+            url: window.location.origin + '/wp-admin/admin-ajax.php',
+
+            data: {action: 'get_editor', name: name},
+
+            success: function (data) {
+
+                if (data) {
+
+                    $('.' + name).find('.editor').html(data.editor);
+
+                }
+
+            }
+
+        });
+
+    }
+
+
+
+
+
+    //získání dat editoru
+
+    function tmce_getContent(editor_id, textarea_id) {
+
+        if ( typeof editor_id == 'undefined' ) editor_id = wpActiveEditor;
+
+        if ( typeof textarea_id == 'undefined' ) textarea_id = editor_id;
+
+
+
+        if ( jQuery('#wp-'+editor_id+'-wrap').hasClass('tmce-active') && tinyMCE.get(editor_id) ) {
+
+            return tinyMCE.get(editor_id).getContent();
+
+        }else{
+
+            return jQuery('#'+textarea_id).val();
+
+        }
+
+    }
+
+
+
+
+
+    // Uploading files
+
+    /* var file_frame;
+
+     var wp_media_post_id = wp.media.model.settings.post.id; // Store the old id
+
+     var set_to_post_id = 10; // Set this
+
+
+
+     jQuery('.upload_image_button').live('click', function (event) {
+
+
+
+     event.preventDefault();
+
+
+
+     // If the media frame already exists, reopen it.
+
+     if (file_frame) {
+
+     // Set the post ID to what we want
+
+     file_frame.uploader.uploader.param('post_id', set_to_post_id);
+
+     // Open frame
+
+     file_frame.open();
+
+     return;
+
+     } else {
+
+     // Set the wp.media post id so the uploader grabs the ID we want when initialised
+
+     wp.media.model.settings.post.id = set_to_post_id;
+
+     }
+
+
+
+     // Create the media frame.
+
+     file_frame = wp.media.frames.file_frame = wp.media({
+
+     title: jQuery(this).data('uploader_title'),
+
+     button: {
+
+     text: jQuery(this).data('uploader_button_text'),
+
+     },
+
+     multiple: false  // Set to true to allow multiple files to be selected
+
+     });
+
+
+
+     // When an image is selected, run a callback.
+
+     file_frame.on('select', function () {
+
+     // We set multiple to false so only get one image from the uploader
+
+     attachment = file_frame.state().get('selection').first().toJSON();
+
+
+
+     // Do something with attachment.id and/or attachment.url here
+
+
+
+     // Restore the main post ID
+
+     wp.media.model.settings.post.id = wp_media_post_id;
+
+     });
+
+
+
+     // Finally, open the modal
+
+     file_frame.open();
+
+     });
+
+
+
+     // Restore the main ID when the add media button is pressed
+
+     jQuery('a.add_media').on('click', function () {
+
+     wp.media.model.settings.post.id = wp_media_post_id;
+
+     });*/
+
 </script>

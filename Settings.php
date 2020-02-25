@@ -1,5 +1,5 @@
 <?php
-require_once 'class/Filter.php';
+require_once 'class/class-filter.php';
 
 class Settings {
 	public function __construct() {
@@ -8,13 +8,13 @@ class Settings {
 
 		if ( isset( $_GET['deleteID'] ) ) {
 
-			$filter->deleteFilter( intval( $_GET['deleteID'] ) );
+			$filter->delete_filter( intval( $_GET['deleteID'] ) );
 
 			header( 'Location: /wp-admin/admin.php?page=woocommerce-step-filter' );
 
 		}
 
-		$filters = $filter->getFilters();
+		$filters = $filter->get_filters();
 		include 'template/settings.phtml';
 	}
 }

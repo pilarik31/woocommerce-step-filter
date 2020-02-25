@@ -1,41 +1,24 @@
 <?php
-
-
-require_once 'class/Filter.php';
-
-
+require_once 'class/class-filter.php';
 
 class NewFilter {
 
-
-
 	public function __construct() {
 
-		$f = new Filter();
-
+		$f      = new Filter();
 		$filter = false;
 
 		if ( $_GET['filterID'] ) {
-
-			$id = intval( $_GET['filterID'] );
-
-			$filter = $f->getFilter( $id );
-
-			//var_dump($filter);
-
+			$id     = intval( $_GET['filterID'] );
+			$filter = $f->get_filter( $id );
 		}
 
 		$data = array();
-
 		$data['name'] = $filter ? $filter['name'] : '';
-
 		$data['desc'] = $filter ? $filter['desc'] : '';
-
 		$data['step'] = $filter ? $filter['step'] : false;
 
-		//var_dump($filter['step']);
-
-		$attrSelect = $f->attrSelect();
+		$attr_select = $f->attrSelect();
 
 		include 'template/new-filter.phtml';
 

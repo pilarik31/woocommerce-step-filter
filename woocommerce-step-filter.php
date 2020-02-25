@@ -48,7 +48,7 @@ function show_filter( $atts = array() ) {
 
 	if ( $atts['id'] ) {
 
-		include 'LoadFilter.php';
+		include 'class-loadfilter.php';
 
 		new LoadFilter( $atts['id'] );
 
@@ -95,7 +95,7 @@ function menu_options() {
 
 function new_filter() {
 
-	include 'NewFilter.php';
+	include 'class-newfilter.php';
 
 }
 
@@ -119,11 +119,11 @@ add_action( 'wp_ajax_save_filter', 'save_filter' );
 
 function save_filter() {
 
-	require_once 'class/Filter.php';
+	require_once 'class/class-filter.php';
 
 	$f = new Filter();
 
-	$id = $f->saveFilter( $_POST );
+	$id = $f->save_filter( $_POST );
 
 	//$steps = $_POST['steps'];
 

@@ -1,61 +1,39 @@
 <?php
-
-
-
 class Filter {
-
-
-
 	private $db;
 
-
-
-	function __construct() {
-
+	public function __construct() {
 		$this->db = $GLOBALS['wpdb'];
-
-		$this->createDbTab();
-
+		$this->create_db_tab();
 	}
 
-
-
-	//otestování existence tabulky mysql a případné vytvoření
-
-	private function createDbTab() {
+	/**
+	 * Otestování existence tabulky mysql a případné vytvoření.
+	 *
+	 * @return void
+	 */
+	private function create_db_tab() {
 
 		$exist = $this->db->get_var( "SHOW TABLES LIKE 'wp_woocommerce_step_filter'" );
 
 		if ( ! $exist ) {
-
 			$this->db->query(
 				'CREATE TABLE `wp_woocommerce_step_filter` (
-
-
                   `id` int(19) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-
-
                   `name` varchar(255) NOT NULL,
-
-
                   `desc` text NOT NULL,
-
-
                   `step` longtext NOT NULL
-
-
                 );'
 			);
-
 		}
-
 	}
 
-
-
-	//vrací uložené filtry
-
-	public function getFilters() {
+	/**
+	 * Vrací uložené filtry.
+	 *
+	 * @return void
+	 */
+	public function get_filters() {
 
 		$results = $this->db->get_results( 'SELECT * FROM wp_woocommerce_step_filter', ARRAY_A );
 
@@ -63,10 +41,8 @@ class Filter {
 
 		foreach ( $results as $f ) {
 
-			$return[ $f['id'] ] = $f;
-
+			$return[ $f['id'] ]         = $f;
 			$return[ $f['id'] ]['step'] = unserialize( $f['step'] );
-
 			$return[ $f['id'] ]['desc'] = $this->decodeHtml( $f['desc'] );
 
 			$steps = array();
@@ -82,37 +58,30 @@ class Filter {
 					$v['desc'] = $this->decodeHtml( $v['desc'] );
 
 					$vals[] = $v;
-
 				}
 
 				$s['vals'] = $vals;
 
 				$steps[] = $s;
-
 			}
-
 			$return[ $f['id'] ]['step'] = $steps;
-
 		}
-
 		return $return;
-
 	}
 
-
-
-	//získání dat filtru
-
-	public function getFilter( $id ) {
+	/**
+	 * Získání dat filtru.
+	 *
+	 * @param [type] $id
+	 * @return void
+	 */
+	public function get_filter( $id ) {
 
 		$results = $this->db->get_results( 'SELECT * FROM wp_woocommerce_step_filter WHERE id = ' . $id, ARRAY_A );
 
-		$return = array();
-
-		$return = $results[0];
-
+		$return         = array();
+		$return         = $results[0];
 		$return['desc'] = $this->decodeHtml( $return['desc'] );
-
 		$return['step'] = unserialize( $return['step'] );
 
 		$steps = array();
@@ -130,7 +99,6 @@ class Filter {
 					$v['desc'] = $this->decodeHtml( $v['desc'] );
 
 					$vals[] = $v;
-
 				}
 
 				$s['vals'] = $vals;
@@ -138,54 +106,53 @@ class Filter {
 				$steps[] = $s;
 
 			}
-
 			$return['step'] = $steps;
-
 		}
 
 		return $return;
 
 	}
 
-
-
-	//výběr atributů eshopu
-
-	public function getAttributes() {
+	/**
+	 * Výběr atributů eshopu.
+	 *
+	 * @return array Výsledky z DB query.
+	 */
+	public function get_attributes() {
 
 		return $this->db->get_results( 'SELECT * FROM wp_woocommerce_attribute_taxonomies', ARRAY_A );
 
 	}
 
+	/**
+	 * Výběr hodnot k atributu.
+	 *
+	 * @param string $attr_name Název atributu.
+	 * @return array Výsledky z DB query.
+	 */
+	public function get_vals( $attr_name ) {
 
-
-	//výběr hodnot k atributu
-
-	public function getVals( $attrName ) {
-
-		$attr = 'pa_' . $attrName;
+		$attr = 'pa_' . $attr_name;
 
 		return $this->db->get_results( "SELECT * FROM wp_term_taxonomy LEFT JOIN wp_terms ON wp_term_taxonomy.term_id = wp_terms.term_id WHERE wp_term_taxonomy.taxonomy = '" . $attr . "'", ARRAY_A );
 
 	}
 
+	/**
+	 * Uložení filtru.
+	 *
+	 * @param [type] $data
+	 * @return void
+	 */
+	public function save_filter( $data ) {
 
-
-
-
-	//uložení filtru
-
-	public function saveFilter( $data ) {
-
-		$filterID = $data['filterID'] != 'false' ? intval( $data['filterID'] ) : false;
-
-		$filterName = $data['filterName'];
-
-		$filterDesc = $this->encodeHtml( $data['filterDesc'] );
+		$filter_id   = $data['filterID'] != 'false' ? intval( $data['filterID'] ) : false;
+		$filter_name = $data['filterName'];
+		$filter_desc = $this->encodeHtml( $data['filterDesc'] );
 
 		//$steps = $data['steps'];
 
-		//var_dump($filterDesc);exit;
+		//var_dump($filter_desc);exit;
 
 		$steps = array();
 
@@ -200,30 +167,24 @@ class Filter {
 				$v['desc'] = $this->encodeHtml( $v['desc'] );
 
 				$vals[] = $v;
-
 			}
 
 			$s['vals'] = $vals;
 
 			$steps[] = $s;
-
 		}
 
 		//var_dump($steps);exit;
 
 		$save = array(
-
-			'name' => $filterName,
-
-			'desc' => $filterDesc,
-
+			'name' => $filter_name,
+			'desc' => $filter_desc,
 			'step' => serialize( $steps ),
-
 		);
 
 		//var_dump($save);exit;
 
-		if ( ! $filterID ) {
+		if ( ! $filter_id ) {
 
 			$this->db->insert( 'wp_woocommerce_step_filter', $save );
 
@@ -234,25 +195,22 @@ class Filter {
 			$this->db->update(
 				'wp_woocommerce_step_filter',
 				$save,
-				array( 'id' => $filterID )
+				array( 'id' => $filter_id )
 			);
 
-			$id = $filterID;
-
+			$id = $filter_id;
 		}
-
 		return $id;
-
 	}
 
-
-
-	//smazání filtru
-
-	public function deleteFilter( $id ) {
-
+	/**
+	 * Smazání filtru.
+	 *
+	 * @param int $id ID filtru.
+	 * @return void
+	 */
+	public function delete_filter( $id ) {
 		$this->db->delete( 'wp_woocommerce_step_filter', array( 'id' => $id ) );
-
 	}
 
 
@@ -279,7 +237,7 @@ class Filter {
 
 	public function attrSelect( $selected = false ) {
 
-		$attr = $this->getAttributes();
+		$attr = $this->get_attributes();
 
 		$select = '<select name="step_param">';
 
@@ -307,11 +265,11 @@ class Filter {
 
 	//select list s výběrem hodnoty
 
-	public function valSelect( $attrName, $selected = false ) {
+	public function valSelect( $attr_name, $selected = false ) {
 
-		$vals = $this->getVals( $attrName );
+		$vals = $this->get_vals( $attr_name );
 
-		$select = '<select name="val_param" attr="' . $attrName . '">';
+		$select = '<select name="val_param" attr="' . $attr_name . '">';
 
 		// var_dump($vals);
 
@@ -340,7 +298,7 @@ class Filter {
 
 	public function allValSelect() {
 
-		$attr = $this->getAttributes();
+		$attr = $this->get_attributes();
 
 		$return = '<div id="vals_lists">';
 
